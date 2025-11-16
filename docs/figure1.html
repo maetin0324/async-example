@@ -1,0 +1,97 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>同期処理の実行タイムライン（非並行・レーン移動）</title>
+<style>
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:24px}
+  .title{font-weight:700;font-size:18px;margin-bottom:8px}
+  .note{font-size:12px;color:#666;margin-top:6px}
+  .legend{margin-top:10px;font-size:12px;color:#555}
+  .chip{display:inline-block;width:12px;height:12px;border-radius:3px;margin:0 6px -2px 0}
+</style>
+
+<div class="title">同期処理の実行タイムライン</div>
+
+<svg viewBox="0 0 980 320" width="100%" height="auto" role="img" aria-label="同期実行のタイムライン">
+  <!-- 基準: 左=80, 1単位=20px, レーン中心: Main=100, A=140, B=180, C=220 -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#555"/>
+    </marker>
+    <style><![CDATA[
+      .tick{stroke:#e7e7e7;stroke-width:1;stroke-dasharray:3 4}
+      .hline{stroke:#f0f0f0;stroke-width:1}
+      .bar{stroke:rgba(0,0,0,.06);stroke-width:1}
+      .lab{font-size:12px;fill:#444}
+      .tkl{font-size:11px;fill:#777}
+    ]]></style>
+  </defs>
+
+  <!-- 時間目盛（0,6,12,18,24,30） -->
+  <g>
+    <g transform="translate(80,0)">
+      <line class="tick" x1="0"   y1="60" x2="0"   y2="300"/><text class="tkl" x="-2" y="50">0</text>
+      <g transform="translate(120,0)"><line class="tick" x1="0" y1="60" x2="0" y2="300"/><text class="tkl" x="-6"  y="50">6</text></g>
+      <g transform="translate(240,0)"><line class="tick" x1="0" y1="60" x2="0" y2="300"/><text class="tkl" x="-10" y="50">12</text></g>
+      <g transform="translate(360,0)"><line class="tick" x1="0" y1="60" x2="0" y2="300"/><text class="tkl" x="-10" y="50">18</text></g>
+      <g transform="translate(480,0)"><line class="tick" x1="0" y1="60" x2="0" y2="300"/><text class="tkl" x="-10" y="50">24</text></g>
+      <g transform="translate(600,0)"><line class="tick" x1="0" y1="60" x2="0" y2="300"/><text class="tkl" x="-10" y="50">30</text></g>
+    </g>
+  </g>
+
+  <!-- レーン基準線＋ラベル -->
+  <g>
+    <line class="hline" x1="80" x2="900" y1="100" y2="100"/><text class="lab" x="20" y="104">Main</text>
+    <line class="hline" x1="80" x2="900" y1="140" y2="140"/><text class="lab" x="20" y="144">関数A</text>
+    <line class="hline" x1="80" x2="900" y1="180" y2="180"/><text class="lab" x="20" y="184">関数B</text>
+    <line class="hline" x1="80" x2="900" y1="220" y2="220"/><text class="lab" x="20" y="224">関数C</text>
+  </g>
+
+  <!-- 実行バー（数値は全て事前計算済み） -->
+  <!-- Main: 0..4 => x=80, w=80 / 24..30 => x=560, w=120 -->
+  <rect class="bar" fill="#f2f7ff" x="80"  y="86" width="80"  height="28" rx="14"/><text class="lab" x="90"  y="104">Main 実行</text>
+  <rect class="bar" fill="#f2f7ff" x="560" y="86" width="120" height="28" rx="14"/><text class="lab" x="570" y="104">Main 再開</text>
+
+  <!-- A: 4..10 => x=160,w=120 / 19..24 => x=460,w=100 -->
+  <rect class="bar" fill="#e9fbf2" x="160" y="126" width="120" height="28" rx="14"/><text class="lab" x="170" y="144">A 実行</text>
+  <rect class="bar" fill="#e9fbf2" x="460" y="126" width="100" height="28" rx="14"/><text class="lab" x="470" y="144">A 再開</text>
+
+  <!-- B: 10..14 => x=280,w=80 / 17..19 => x=420,w=40 -->
+  <rect class="bar" fill="#fff6e6" x="280" y="166" width="80" height="28" rx="14"/><text class="lab" x="290" y="184">B 実行</text>
+  <rect class="bar" fill="#fff6e6" x="420" y="166" width="40" height="28" rx="14"/><text class="lab" x="426" y="184">B 再開</text>
+
+  <!-- C: 14..17 => x=360,w=60 -->
+  <rect class="bar" fill="#f7ecff" x="360" y="206" width="60" height="28" rx="14"/><text class="lab" x="370" y="224">C 実行</text>
+
+  <!-- 呼び出し/戻りの矢印（xは事前計算済み） -->
+  <!-- call A t=4 => x=160 -->
+  <line x1="160" y1="100" x2="160" y2="140" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text class="lab" x="166" y="122">call A()</text>
+
+  <!-- call B t=10 => x=280 -->
+  <line x1="280" y1="140" x2="280" y2="180" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text class="lab" x="286" y="162">call B()</text>
+
+  <!-- call C t=14 => x=360 -->
+  <line x1="360" y1="180" x2="360" y2="220" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text class="lab" x="366" y="202">call C()</text>
+
+  <!-- return C->B t=17 => x=420 -->
+  <line x1="420" y1="220" x2="420" y2="180" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text class="lab" x="426" y="192">return</text>
+
+  <!-- return B->A t=19 => x=460 -->
+  <line x1="460" y1="180" x2="460" y2="140" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text class="lab" x="466" y="152">return</text>
+
+  <!-- return A->Main t=24 => x=560 -->
+  <line x1="560" y1="140" x2="560" y2="100" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text class="lab" x="566" y="112">return</text>
+</svg>
+
+<div class="legend">
+  <span><i class="chip" style="background:#f2f7ff"></i>Main</span>
+  <span><i class="chip" style="background:#e9fbf2"></i>関数A</span>
+  <span><i class="chip" style="background:#fff6e6"></i>関数B</span>
+  <span><i class="chip" style="background:#f7ecff"></i>関数C</span>
+</div>
+<p class="note">※ 同期処理では任意の時点で実行中のバーは常に1本（非並行）。呼び出し時は下段へ、戻り時は上段へ制御が移動します。</p>

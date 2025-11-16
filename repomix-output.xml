@@ -1,0 +1,548 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+async-example/
+  .git/
+    hooks/
+      README.sample
+    info/
+      exclude
+    logs/
+      refs/
+        heads/
+          main
+        remotes/
+          origin/
+            main
+      HEAD
+    objects/
+      11/
+        1962f4d1b3fa41e47c6ca4eff229e077f8820a
+      13/
+        c15cf7adb00ebd7eda691a6fa32af8254303c5
+      19/
+        f1abc681ff4650336e73835b91e964fc89ac68
+      23/
+        bff3b6167ad10172ff303662bbf1e911f7e990
+      2d/
+        19079d39df1d1735e83f6529f9ae42fdecd07c
+      3d/
+        06b22d3a504c5d45d2baae590b28a2dc598e63
+      4a/
+        50df98cfc7532c774210cee40c24bd42fa717a
+      4d/
+        90dba872c7aeddeff8d21d7f3d64825fea4b91
+      4e/
+        b32f32a63cd8889ae4f840343f60ed6905e705
+      50/
+        0300faf5dedfe7c180bf29f6329d03ad3874f5
+        bec8966fc17952b70ef1ab9f812c45e517357c
+      71/
+        6f7ce2c26b855251e83d33784926d3a01801b6
+      72/
+        17ece7807b8de88ddc1da96da6a56d047dd760
+      8c/
+        5171a7a59b6c73e631b0874eafa4aa9a5e7336
+      9c/
+        ed9d232abb972408f80d48d024e2be299cc6a6
+      ae/
+        c399ddf5b80b20320fe397e8668d3585a74942
+      ca/
+        d88bd058c8b7c8e76205dd829acd0f3a4bae83
+      cb/
+        d91f100a948502ae29d11c9eb1a3442cc066bd
+      cf/
+        998adfd12d96e7b168ab43d39ca7edf2902396
+      dc/
+        ec3eced8c5e065ff1ae0c37496d16c4f8fc90d
+      ea/
+        8c4bf7f35f6f77f75d92ad8ce8349f6e81ddba
+      ec/
+        3c941b4fc388ae21ae0820a78374d56fc8d72a
+    refs/
+      heads/
+        main
+      remotes/
+        origin/
+          main
+    COMMIT_EDITMSG
+    config
+    description
+    FETCH_HEAD
+    HEAD
+    index
+  src/
+    bin/
+      chapter2.rs
+      chapter4.rs
+    main.rs
+  .gitignore
+  Cargo.toml
+docs/
+  chapter1.md
+  chapter2.md
+  chapter3.md
+  chapter4.md
+  chapter5.md
+  chapter6.md
+  chapter7.md
+  kousei.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="async-example/.git/hooks/README.sample">
+#!/bin/sh
+#
+# Place appropriately named executable hook scripts into this directory
+# to intercept various actions that git takes.  See `git help hooks` for
+# more information.
+</file>
+
+<file path="async-example/.git/info/exclude">
+# File patterns to ignore; see `git help ignore` for more information.
+# Lines that start with '#' are comments.
+</file>
+
+<file path="async-example/.git/logs/refs/heads/main">
+0000000000000000000000000000000000000000 cf998adfd12d96e7b168ab43d39ca7edf2902396 maetin <maetin0324@gmail.com> 1763197838 +0900	commit (initial): runtime
+cf998adfd12d96e7b168ab43d39ca7edf2902396 4d90dba872c7aeddeff8d21d7f3d64825fea4b91 maetin <maetin0324@gmail.com> 1763197859 +0900	commit: fix 1
+4d90dba872c7aeddeff8d21d7f3d64825fea4b91 cbd91f100a948502ae29d11c9eb1a3442cc066bd maetin <maetin0324@gmail.com> 1763260579 -0600	commit: 内容
+</file>
+
+<file path="async-example/.git/logs/refs/remotes/origin/main">
+0000000000000000000000000000000000000000 cbd91f100a948502ae29d11c9eb1a3442cc066bd maetin <maetin0324@gmail.com> 1763260584 -0600	update by push
+</file>
+
+<file path="async-example/.git/logs/HEAD">
+0000000000000000000000000000000000000000 cf998adfd12d96e7b168ab43d39ca7edf2902396 maetin <maetin0324@gmail.com> 1763197838 +0900	commit (initial): runtime
+cf998adfd12d96e7b168ab43d39ca7edf2902396 4d90dba872c7aeddeff8d21d7f3d64825fea4b91 maetin <maetin0324@gmail.com> 1763197859 +0900	commit: fix 1
+4d90dba872c7aeddeff8d21d7f3d64825fea4b91 cbd91f100a948502ae29d11c9eb1a3442cc066bd maetin <maetin0324@gmail.com> 1763260579 -0600	commit: 内容
+</file>
+
+<file path="async-example/.git/refs/heads/main">
+cbd91f100a948502ae29d11c9eb1a3442cc066bd
+</file>
+
+<file path="async-example/.git/refs/remotes/origin/main">
+cbd91f100a948502ae29d11c9eb1a3442cc066bd
+</file>
+
+<file path="async-example/.git/COMMIT_EDITMSG">
+内容
+</file>
+
+<file path="async-example/.git/config">
+[core]
+	bare = false
+	repositoryformatversion = 0
+	filemode = true
+	ignorecase = true
+	precomposeunicode = true
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/maetin0324/async-example.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+</file>
+
+<file path="async-example/.git/description">
+Unnamed repository; edit this file 'description' to name the repository.
+</file>
+
+<file path="async-example/.git/HEAD">
+ref: refs/heads/main
+</file>
+
+<file path="async-example/src/bin/chapter2.rs">
+use std::future::Future;
+
+struct CountFuture {
+	init: u64,
+    count: u64,
+}
+
+impl Future for CountFuture {
+    type Output = u64;
+    fn poll(
+        self: std::pin::Pin<&mut Self>,
+        _: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+		if self.count >= self.init {
+			return std::task::Poll::Ready(self.count)
+		}
+
+		std::task::Poll::Pending
+    }
+}
+
+
+fn main() {
+}
+</file>
+
+<file path="async-example/src/bin/chapter4.rs">
+use std::pin::Pin;
+use std::sync::mpsc::{Receiver, Sender};
+use std::task::{RawWaker, RawWakerVTable};
+use std::{
+    cell::RefCell,
+    future::Future,
+    rc::Rc,
+    task::{Poll, Waker},
+};
+
+static VTABLE: RawWakerVTable =
+    RawWakerVTable::new(clone_waker, wake_task, wake_by_ref_task, drop_waker);
+
+unsafe fn clone_waker(data: *const ()) -> RawWaker {
+    let task_rc: Rc<Task> = Rc::from_raw(data as *const Task);
+    let task_rc_clone = task_rc.clone();
+    RawWaker::new(Rc::into_raw(task_rc_clone) as *const (), &VTABLE)
+}
+
+unsafe fn wake_task(data: *const ()) {
+    let task_rc: Rc<Task> = Rc::from_raw(data as *const Task);
+    task_rc.wake();
+    // Rc pointer drop here
+}
+
+unsafe fn wake_by_ref_task(data: *const ()) {
+    let task_rc: Rc<Task> = Rc::from_raw(data as *const Task);
+    task_rc.wake();
+    // drop guard
+    let _ = Rc::into_raw(task_rc);
+}
+
+unsafe fn drop_waker(data: *const ()) {
+    let _ = Rc::from_raw(data as *const Task);
+    // Rc pointer drop here
+}
+
+struct SimpleExecutor {
+    task_queue: Receiver<Rc<Task>>,
+    task_sender: Sender<Rc<Task>>,
+    waker_queue: Receiver<Waker>,
+    waker_sender: Sender<Waker>,
+}
+
+impl SimpleExecutor {
+    fn new() -> SimpleExecutor {
+        let (task_sender, task_queue) = std::sync::mpsc::channel();
+        let (waker_sender, waker_queue) = std::sync::mpsc::channel();
+        SimpleExecutor { task_queue, task_sender, waker_queue, waker_sender }
+    }
+
+    fn spawn<F, T>(&self, f: F) -> JoinHandle<T> 
+    where 
+        F: Future<Output = T> + 'static,
+        T: 'static,
+    {
+        let slot: Rc<RefCell<Slot<T>>> = Rc::new(RefCell::new(Slot {
+            res_slot: RefCell::new(None),
+            waker_slot: None,
+        }));
+
+        let slot_clone = slot.clone();
+
+        let wrapped_future = async move {
+            let res = f.await;
+            let binding = slot_clone.borrow();
+            binding.waker_slot.as_ref().map(|w| w.wake_by_ref()).unwrap();
+            *binding.res_slot.borrow_mut() = Some(res);
+        };
+        let wrapped_future = RefCell::new(Box::pin(wrapped_future));
+
+        let task = Rc::new(Task {
+            future: wrapped_future,
+            sender: self.task_sender.clone(),
+        });
+
+        self.task_sender.send(task).expect("spawn failed");
+
+        JoinHandle { slot }
+    }
+
+    fn progress(&self) -> bool {
+        let state = false;
+        if let Ok(task) = self.task_queue.try_recv() {
+            let waker = task.create_waker();
+            let mut cx = std::task::Context::from_waker(&waker);
+            match task.poll(&mut cx) {
+                Poll::Ready(_) => {}
+                Poll::Pending => {
+                    self.waker_sender.send(waker).expect("progress failed");
+                }
+            }
+            return true;
+        }
+
+        if let Ok(waker) = self.waker_queue.try_recv() {
+            waker.wake();
+            return true;
+        }
+        false
+    }
+}
+
+struct Task {
+    future: RefCell<Pin<Box<dyn Future<Output = ()>>>>,
+    sender: Sender<Rc<Task>>,
+}
+
+impl Task {
+    fn create_waker(self: &Rc<Self>) -> Waker {
+        let rc_ptr = Rc::into_raw(self.clone()) as *const ();
+        let raw = RawWaker::new(rc_ptr, &VTABLE);
+        // its safe
+        unsafe { Waker::from_raw(raw) }
+    }
+
+    fn wake(self: &Rc<Self>) {
+        self.sender.send(self.clone()).expect("wake failed");
+    }
+
+    fn poll(&self, cx: &mut std::task::Context<'_>) -> Poll<()> {
+        self.future.borrow_mut().as_mut().poll(cx)
+    }
+}
+
+struct Slot<T> {
+    res_slot: RefCell<Option<T>>,
+    waker_slot: Option<Waker>,
+}
+
+struct JoinHandle<T> {
+    slot: Rc<RefCell<Slot<T>>>,
+}
+
+impl<T> Future for JoinHandle<T> {
+    type Output = T;
+
+    fn poll(self: std::pin::Pin<&mut Self>, cx: &mut std::task::Context<'_>) -> Poll<Self::Output> {
+        let mut bindings = self.slot.borrow_mut();
+        if bindings.waker_slot.is_none() {
+            bindings.waker_slot.replace(cx.waker().clone());
+        }
+
+        let mut res = bindings.res_slot.borrow_mut();
+        if res.is_some() {
+            Poll::Ready(res.take().unwrap())
+        } else {
+            Poll::Pending
+        }
+    }
+}
+
+
+struct CountFuture {
+	init: u64,
+    count: u64,
+}
+
+fn count(init: u64) -> CountFuture {
+    CountFuture {
+        init,
+        count: 0,
+    }
+}
+
+impl Future for CountFuture {
+    type Output = u64;
+    fn poll(
+        self: std::pin::Pin<&mut Self>,
+        _: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+		if self.count >= self.init {
+            println!("CountFuture completed with count: {}", self.count);
+			return std::task::Poll::Ready(self.count)
+		}
+
+		std::task::Poll::Pending
+    }
+}
+
+
+fn main() {
+    let executor = SimpleExecutor::new();
+    executor.spawn(count(5));
+
+    while executor.progress() {
+        // do nothing
+    }
+}
+</file>
+
+<file path="async-example/src/main.rs">
+fn main() {
+    println!("Hello, world!");
+}
+</file>
+
+<file path="async-example/.gitignore">
+/target
+</file>
+
+<file path="async-example/Cargo.toml">
+[package]
+name = "async-example"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[bin]]
+name = "chapter2"
+
+[[bin]]
+name = "chapter4"
+</file>
+
+<file path="docs/chapter1.md">
+# 非同期処理ってなんだ？
+普段何気なく使っている`async/await`構文、よくわからないまま使ってはいないだろうか？
+
+「ネットワークとかなんか遅いやつはasyncってやつになってる」
+「async関数ってやつはawaitをしないといけないらしい」
+「Rustだとtokioってやつを使わないとasync関数のライブラリが使えない」
+
+全て筆者が過去に思っていたことである。
+
+`async/await`構文は非同期処理の難しさを意識することなくパフォーマンス上の利点を得られる非常に優れた概念である。
+しかし、その一方で見た目上の簡単さから、非同期処理の本質を理解することを難しくしている一面もある。
+
+そこで、本記事では非同期処理の仕組みを体感として理解するために、非同期ランタイムの自作を通じて非同期処理とは何かを学ぶことを目的とする。
+
+(このページは基本的な概念についての説明に終始するため、適宜参照するかもしくは読み飛ばしてもらっても構わない)
+
+## 同期/非同期処理
+### 同期処理
+本題の非同期処理を考える前にまず**同期処理**を考えたい。
+
+同期処理とは、処理の呼び出し元と呼び出し先の実行が同期しているものを指す。
+ここでいう「同期」とは、ブロッキング・タイムライン上の非並行状態をさし、処理の終了まで待機が発生するものとなっている。
+
+同期関数の呼び出しでは、すべての関数が呼び出した関数の処理が終わるまで（物理的・もしくは概念的に）待つのでそれぞれの処理は実行が終了するまで中断されることはなく、書いた順に上から実行される。(手続型プログラミング)
+
+そのため、論理的な実行順序とスタック上の関数呼び出しが一致しており、非常にわかりやすい。
+
+
+[超わかりやすい図1]
+
+### 非同期処理
+**非同期処理**とは処理の呼び出し元と呼び出し先の実行が同期していないものを指す。
+
+非同期処理には実行の**中断**と**再開**が存在する。
+
+非同期関数は処理が呼び出されても中断するべきタイミング(ネットワーク通信の開始など)が訪れたときに呼び出し元に処理を返す。
+そして、実行の再開が可能になったタイミング(ネットワーク通信の完了など)で処理の再開を行う。
+
+ユーザーレベルで非同期処理を実現する場合、処理の中断と再開を伴うと論理的な実行順序とスタック上にある関数が一致しなくなるため、実行順序の理解やデバッグが難しくなる。
+
+[超わかりやすい図2]
+
+## async/await構文![^1]
+async/await構文は非同期処理における処理の中断と再開を同期関数の呼び出しと同様にプログラム上で扱えるようにした非常に良い概念である。
+asyncは関数が非同期関数であることをマークし、async関数に対するawaitは、その時点で中断を行うということを表している。
+
+[超わかりやすい図3]
+
+
+
+
+[^1]: エイシンク/アウェイトと読む、アシンクやエイウェイトではない
+</file>
+
+<file path="docs/chapter2.md">
+#　概要
+このプロジェクトはRustの非同期ランタイムがどのような仕組みになっているかを理解するために、
+小規模かつ十分な機能を持ったRust非同期ランタイムを実装することを目指す
+
+#　Rust言語の非同期API
+Rust言語の一つの特徴として、非同期処理のスケジューラが言語非依存となっており、差し替え可能なことが挙げられる。
+これはRust言語が組み込みプログラムなどにも使用されることを想定して、async/await構文やWakeのAPIそれ自体は提供する一方でasync/await構文によって生成される非同期タスクのスケジューリング戦略はOSやデバイスごとによって自由度が高く設計できるようにすることを目指したためである
+
+Rust言語それ自体に組み込まれている非同期処理のAPIはシンプルで、`Future`と`Waker`(とその内部のRawWaker, RawWakerVTable)の二つのみである。
+
+```rust
+pub trait Future {
+    type Output;
+
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output>;
+}
+
+pub struct Waker {
+    waker: RawWaker,
+}
+
+pub struct RawWaker {
+    data: *const (),
+    vtable: &'static RawWakerVTable,
+}
+
+pub struct RawWakerVTable {
+    clone: unsafe fn(*const ()) -> RawWaker,
+    wake: unsafe fn(*const ()),
+    wake_by_ref: unsafe fn(*const ()),
+    drop: unsafe fn(*const ()),
+}
+```
+
+`Future`は実行の中断・yieldを、`Waker`は中断されたタスクの再実行を行うという極めて簡潔かつ綺麗な抽象化がなされている。
+
+いきなりそれぞれの定義を見ても理解するのは難しいと思うので、これ以降のchapterでは`Future`, `Waker`それぞれの意味と使い方を解説していく。
+</file>
+
+<file path="docs/kousei.md">
+1. 同期・非同期とは何か
+2. Rustの非同期APIについて
+3. Futureについて
+5. Wakerについて
+4. Futureを実行するExecutorについて
+6. Wakerを実行するReactorについて
+7. io_uringを用いた実践非同期ランタイム
+</file>
+
+</files>

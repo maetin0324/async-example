@@ -1,0 +1,147 @@
+<!-- 非同期処理の実行タイムライン（実行＝実線、await中＝点線の仮想継続）／ミニマルマーカー版 -->
+<div style="font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; margin: 16px 0;">
+  <div style="font-weight:700; font-size:18px; margin: 0 0 8px;">
+    非同期処理の実行タイムライン（実行＝実線、await中＝点線の仮想継続）
+  </div>
+
+  <div
+    style="
+      position: relative; border:1px solid #ddd; border-radius: 12px; background:#fff;
+      padding:16px 12px 20px;
+      display:grid; grid-template-rows: 28px 56px 56px 56px 56px; gap:0;
+    "
+  >
+    <!-- 目盛り（0,6,12,18,24,30 目印。全体は36列グリッド） -->
+    <div style="display:grid; grid-template-columns: repeat(36, 1fr);" aria-hidden="true">
+      <!-- 1..36（ラベルつきだけ表示） -->
+      <div style="height:100%; border-left:1px dashed #e7e7e7; position:relative;">
+        <span style="position:absolute; top:6px; left:-6px; font-size:11px; color:#777;">0</span>
+      </div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7; position:relative;">
+        <span style="position:absolute; top:6px; left:-6px; font-size:11px; color:#777;">6</span>
+      </div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7; position:relative;">
+        <span style="position:absolute; top:6px; left:-10px; font-size:11px; color:#777;">12</span>
+      </div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7; position:relative;">
+        <span style="position:absolute; top:6px; left:-10px; font-size:11px; color:#777;">18</span>
+      </div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7; position:relative;">
+        <span style="position:absolute; top:6px; left:-10px; font-size:11px; color:#777;">24</span>
+      </div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7; position:relative;">
+        <span style="position:absolute; top:6px; left:-10px; font-size:11px; color:#777;">30</span>
+      </div>
+      <!-- 埋め（残り列） -->
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div><div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div><div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div><div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div><div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div><div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div><div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+      <div style="height:100%; border-left:1px dashed #e7e7e7;"></div>
+    </div>
+
+    <!-- Main（Executor） -->
+    <div style="position:relative;">
+      <div style="position:absolute; left:0; top:-18px; font-size:12px; color:#444; font-weight:600;">Main（Executor）</div>
+      <div style="height:100%; display:grid; grid-template-columns: repeat(36, 1fr); align-items:center; gap:6px;">
+        <div style="grid-column: 2 / span 2; height:26px; border-radius:13px; background:#f2f7ff; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center; font-size:12px;">poll A()</div>
+        <div style="grid-column: 5 / span 2; height:26px; border-radius:13px; background:#f2f7ff; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center; font-size:12px;">poll B()</div>
+        <div style="grid-column: 17 / span 2; height:26px; border-radius:13px; background:#f2f7ff; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center; font-size:12px;">poll B (wake)</div>
+      </div>
+    </div>
+
+    <!-- タスクA -->
+    <div style="position:relative;">
+      <div style="position:absolute; left:0; top:-18px; font-size:12px; color:#444; font-weight:600;">タスクA（Future A）</div>
+      <div style="height:100%; display:grid; grid-template-columns: repeat(36, 1fr); align-items:center; gap:6px;">
+        <div style="grid-column: 2 / span 2; height:26px; border-radius:13px; background:#e9fbf2; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center; font-size:12px;">A 実行</div>
+        <!-- Pending（点線） -->
+        <div style="grid-column: 6 / span 20; height:18px; border-radius:10px; border:1.5px dashed #6aa88d; color:#6aa88d; background:transparent; display:flex; align-items:center; justify-content:center; font-size:10px;">
+          A Pending（await IO）
+        </div>
+        <!-- 再開 -->
+        <div style="grid-column: 27 / span 8; height:26px; border-radius:13px; background:#e9fbf2; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center; font-size:12px;">
+          A 再開→完了
+        </div>
+      </div>
+    </div>
+
+    <!-- タスクB -->
+    <div style="position:relative;">
+      <div style="position:absolute; left:0; top:-18px; font-size:12px; color:#444; font-weight:600;">タスクB（Future B）</div>
+      <div style="height:100%; display:grid; grid-template-columns: repeat(36, 1fr); align-items:center; gap:6px;">
+        <div style="grid-column: 5 / span 2; height:26px; border-radius:13px; background:#fff6e6; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center; font-size:12px;">B 実行</div>
+        <div style="grid-column: 7 / span 10; height:18px; border-radius:10px; border:1.5px dashed #b89b6a; color:#b89b6a; background:transparent; display:flex; align-items:center; justify-content:center; font-size:10px;">B Pending（await timer）</div>
+        <div style="grid-column: 17 / span 5; height:26px; border-radius:13px; background:#fff6e6; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); display:flex; align-items:center; justify-content:center; font-size:12px;">B 再開→完了</div>
+      </div>
+    </div>
+
+    <!-- Reactor / IO -->
+    <div style="position:relative;">
+      <div style="position:absolute; left:0; top:-18px; font-size:12px; color:#444; font-weight:600;">Reactor / IO</div>
+      <div style="height:100%; display:grid; grid-template-columns: repeat(36, 1fr); align-items:center; gap:6px;">
+        <div style="grid-column: 6 / span 20; height:26px; border-radius:6px; background:#edf0f3; border:1px solid #dfe4ea; display:flex; align-items:center; justify-content:center; font-size:12px; color:#556;">IO待ち（A）</div>
+        <div style="grid-column: 7 / span 10; height:26px; border-radius:6px; background:#edf0f3; border:1px solid #dfe4ea; display:flex; align-items:center; justify-content:center; font-size:12px; color:#556;">timer待ち（B）</div>
+      </div>
+    </div>
+
+    <!-- 小さめ await / wake マーカー（細線・小三角・小ラベル） -->
+    <div
+      style="
+        pointer-events:none; position:absolute; inset:16px 12px 20px;
+        display:grid; grid-template-rows: 28px 56px 56px 56px 56px;
+        grid-template-columns: repeat(36, 1fr);
+      "
+    >
+      <!-- A await: 列=6 / A→Reactor -->
+      <div style="grid-column:6; grid-row:3 / 5; align-self:center; justify-self:center; width:1px; height:44px; background:#666; opacity:.75;"></div>
+      <div style="grid-column:6; grid-row:5; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #666; justify-self:center;"></div>
+      <div style="grid-column:6; grid-row:3; justify-self:start; transform: translate(4px,-16px); font-size:10px; color:#555; background:rgba(255,255,255,.85); border-radius:6px; padding:1px 4px;">await</div>
+
+      <!-- B await: 列=7 / B→Reactor -->
+      <div style="grid-column:7; grid-row:4 / 5; align-self:center; justify-self:center; width:1px; height:36px; background:#666; opacity:.75;"></div>
+      <div style="grid-column:7; grid-row:5; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid #666; justify-self:center;"></div>
+      <div style="grid-column:7; grid-row:4; justify-self:start; transform: translate(4px,-16px); font-size:10px; color:#555; background:rgba(255,255,255,.85); border-radius:6px; padding:1px 4px;">await</div>
+
+      <!-- B wake: 列=17 / Reactor→B -->
+      <div style="grid-column:17; grid-row:5 / 4; align-self:center; justify-self:center; width:1px; height:36px; background:#666; opacity:.8;"></div>
+      <div style="grid-column:17; grid-row:4; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-bottom:7px solid #666; justify-self:center;"></div>
+      <div style="grid-column:17; grid-row:4; justify-self:end; transform: translate(-4px,-28px); font-size:10px; color:#555; background:rgba(255,255,255,.85); border-radius:6px; padding:1px 4px;">wake(B)</div>
+
+      <!-- A wake: 列=27 / Reactor→A -->
+      <div style="grid-column:27; grid-row:5 / 3; align-self:center; justify-self:center; width:1px; height:56px; background:#666; opacity:.8;"></div>
+      <div style="grid-column:27; grid-row:3; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-bottom:7px solid #666; justify-self:center;"></div>
+      <div style="grid-column:27; grid-row:3; justify-self:end; transform: translate(-4px,-28px); font-size:10px; color:#555; background:rgba(255,255,255,.85); border-radius:6px; padding:1px 4px;">wake(A)</div>
+    </div>
+  </div>
+
+  <!-- 凡例・注記 -->
+  <div style="margin-top:10px; font-size:12px; color:#555; display:flex; gap:14px; flex-wrap:wrap;">
+    <span><i style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#f2f7ff; margin-right:6px;"></i>Main</span>
+    <span><i style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#e9fbf2; margin-right:6px;"></i>タスクA</span>
+    <span><i style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#fff6e6; margin-right:6px;"></i>タスクB</span>
+    <span><i style="display:inline-block; width:12px; height:12px; border-radius:3px; background:#edf0f3; border:1px solid #dfe4ea; margin-right:6px;"></i>Reactor</span>
+  </div>
+  <div style="font-size:12px; color:#666; margin-top:6px;">
+    実線＝実行（poll中）。点線＝Pending（論理的継続の見かけ）。awaitでReactorへ渡り、イベント完了でwakeして再開。
+  </div>
+</div>
