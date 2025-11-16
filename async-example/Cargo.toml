@@ -1,12 +1,12 @@
 [package]
 name = "async-example"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 
 [[bin]]
-name = "chapter2"
+name = "chapter3"
 
 [[bin]]
 name = "chapter4"
