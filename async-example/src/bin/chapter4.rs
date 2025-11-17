@@ -46,41 +46,53 @@ impl SimpleExecutor {
     }
 }
 
-struct StepN {
-    name: &'static str,
-    cur: u32,
-    n: u32,
+struct CountFuture {
+	init: u64,
+    count: u64,
 }
 
-impl StepN {
-    fn new(name: &'static str, n: u32) -> Self { Self { name, cur: 0, n } }
+fn count(init: u64) -> CountFuture {
+    CountFuture {
+        init,
+        count: 0,
+    }
 }
 
-impl Future for StepN {
-    type Output = ();
+impl Future for CountFuture {
+    type Output = u64;
+    fn poll(
+        self: std::pin::Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+		if self.count >= self.init {
+            println!("CountFuture completed with count: {}", self.count);
+			return std::task::Poll::Ready(self.count)
+		}
 
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<()> {
-        // Pin越しに可変参照を取り出す（今回自己参照は持っていないのでunsafeで剥がす）
-        let this = unsafe { self.get_unchecked_mut() };
+        cx.waker().wake_by_ref(); // 自分自身を再度スケジュールする
+        self.get_mut().count += 1; // カウントを進める
 
-        if this.cur < this.n {
-            this.cur += 1;
-            println!("{} step = {}", this.name, this.cur);
-            cx.waker().wake_by_ref(); // BusyExecutorでは意味がない
-            Poll::Pending
-        } else {
-            println!("{} done", this.name);
-            Poll::Ready(())
-        }
+		std::task::Poll::Pending
     }
 }
 
 fn main() {
     let mut ex = SimpleExecutor::new();
 
-    ex.spawn(StepN::new("A", 3));
-    ex.spawn(StepN::new("B", 5));
+    let fut1 = async {
+        let res1 = count(5).await;
+        println!("First future count finished with {}", res1);
+        let res2 = count(1 << 10).await;
+        println!("Large count finished with {}", res2);
+    };
 
-    ex.run();
+    let fut2 = async {
+        let res = count(10).await;
+        println!("Second future count finished with {}", res);
+    };
+
+    ex.spawn(fut1);
+    ex.spawn(fut2);
+    ex.run(); 
     println!("all done");
 }

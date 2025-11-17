@@ -54,73 +54,165 @@ impl BusyExecutor {
     }
 }
 ```
+`spawn`関数で`Future`をキューに追加し、`run`関数でキューから`Future`を取り出して`poll`を呼び出している。`Poll::Pending`が返ってきた場合は再度キューの後ろに戻し、`Poll::Ready(())`が返ってきた場合は破棄する。
 
-試しに「`poll` されるたびに一歩だけ進む」`Future` を二つ並べて走らせる。`await` は使っていないが、内部状態で中断を表現しているので、Executor 側は `poll` を回すだけで進む。
+ここで`spawn`の実装を見てみると、受け入れるFutureが`Output=()`に固定されていることがわかる。`Output = T`のように任意の出力を期待するような`spawn`を実装するには、`Future`の出力を格納するための共有スロット、結果を外部から受け取るための`JoinHandle`などが必要になる。
+`JoinHandle`の実装については、次章以降で詳しく解説する。
+
+試しに「`poll` されるたびに一歩だけ進む」`CountFuture`を実装して、これを使ったasyncブロックを並行に動かしてみよう 
 
 ```rust
-use std::task::{Context, Poll};
-use std::pin::Pin;
-
-/// pollが呼ばれるたびに1カウント進み、n回で完了するFuture
-struct StepN {
-    name: &'static str,
-    cur: u32,
-    n: u32,
+struct CountFuture {
+	init: u64,
+    count: u64,
 }
 
-impl StepN {
-    fn new(name: &'static str, n: u32) -> Self { Self { name, cur: 0, n } }
+fn count(init: u64) -> CountFuture {
+    CountFuture {
+        init,
+        count: 0,
+    }
 }
 
-impl Future for StepN {
-    type Output = ();
+impl Future for CountFuture {
+    type Output = u64;
+    fn poll(
+        self: std::pin::Pin<&mut Self>,
+        cx: &mut std::task::Context<'_>,
+    ) -> std::task::Poll<Self::Output> {
+		if self.count >= self.init {
+            println!("CountFuture completed with count: {}", self.count);
+			return std::task::Poll::Ready(self.count)
+		}
 
-    fn poll(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<()> {
-        // Pin越しに可変参照を取り出す（今回自己参照は持っていないのでunsafeで剥がす）
-        let this = unsafe { self.get_unchecked_mut() };
+        cx.waker().wake_by_ref(); // 自分自身を再度スケジュールする
+        self.get_mut().count += 1; // カウントを進める
 
-        if this.cur < this.n {
-            this.cur += 1;
-            println!("{} step = {}", this.name, this.cur);
-            Poll::Pending
-        } else {
-            println!("{} done", this.name);
-            Poll::Ready(())
-        }
+		std::task::Poll::Pending
     }
 }
 
 fn main() {
-    let mut ex = BusyExecutor::new();
+    let mut ex = SimpleExecutor::new();
 
-    ex.spawn(StepN::new("A", 3));
-    ex.spawn(StepN::new("B", 5));
+    let fut1 = async {
+        let res1 = count(5).await;
+        println!("First count finished with {}", res1);
+        let res2 = count(3).await;
+        println!("Second count finished with {}", res2);
+    };
 
-    ex.run();
+    let fut2 = async {
+        let res = count(1 << 20).await;
+        println!("Large count finished with {}", res);
+    };
+
+    ex.spawn(fut1);
+    ex.spawn(fut2);
+    ex.run(); 
     println!("all done");
 }
 ```
 
-出力の雰囲気は次のとおり。
+これを実行すると、以下のような出力が得られる。
 
 ```
-A step = 1
-B step = 1
-A step = 2
-B step = 2
-A step = 3
-A done
-B step = 3
-B step = 4
-B step = 5
-B done
+CountFuture completed with count: 5
+First future count finished with 5
+CountFuture completed with count: 10
+Second future count finished with 10
+CountFuture completed with count: 1024
+Large count finished with 1024
 all done
 ```
 
+`fut1`と`fut2`が並行に実行されかつ、asyncブロックの中で`await`が正しく機能していること、
+`await`によりasyncブロックの中でFutureの返り値を利用できていることがわかる。
+
+### なぜasyncブロックの中でawaitした結果が使えるのか
+勘のいい読者であれば、「`spawn`関数の引数は`Future<Output=()>`なのに、なぜasyncブロックの中で`await`した結果を使えているのか？」と疑問に思うかもしれない。これは、`executor`がpollするFutureと、asyncブロックの中でawaitされるFutureが異なるためである。
+`fut1`のasyncブロックは以下のような形のFutureに展開される。
+
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Fut1State { Start, Await1, After1, Await2, Done }
+
+struct Fut1 {
+    state: Fut1State,
+    current: Option<CountFuture>, // いま await 中のサブ Future を保持
+    res1: u64,                    // 1個目の await の結果を保持
+}
+
+impl Fut1 {
+    fn new() -> Self {
+        Fut1 { state: Fut1State::Start, current: None, res1: 0 }
+    }
+}
+
+impl Future for Fut1 {
+    type Output = ();
+
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<()> {
+        // Fut1 も（この形なら）Unpin なので安全に可変参照を取れる
+        let this = self.get_mut();
+
+        loop {
+            match this.state {
+                Fut1State::Start => {
+                    // let res1 = count(5).await; へ進む前に Future を作る
+                    this.current = Some(count(5));
+                    this.state = Fut1State::Await1;
+                }
+
+                Fut1State::Await1 => {
+                    // res1 = current.await;
+                    let fut = this.current.as_mut().expect("future missing");
+                    // CountFuture は Unpin → Pin::new(&mut ...) で OK
+                    match Pin::new(fut).poll(cx) {
+                        Poll::Pending => return Poll::Pending,
+                        Poll::Ready(r1) => {
+                            println!("First count finished with {}", r1);
+                            this.res1 = r1;
+                            this.current = None;            // 1個目を破棄
+                            this.state = Fut1State::After1; // 次の文へ
+                        }
+                    }
+                }
+
+                Fut1State::After1 => {
+                    // let res2 = count(3).await;
+                    this.current = Some(count(3));
+                    this.state = Fut1State::Await2;
+                }
+
+                Fut1State::Await2 => {
+                    let fut = this.current.as_mut().expect("future missing");
+                    match Pin::new(fut).poll(cx) {
+                        Poll::Pending => return Poll::Pending,
+                        Poll::Ready(r2) => {
+                            println!("Second count finished with {}", r2);
+                            this.current = None;
+                            this.state = Fut1State::Done;
+                            return Poll::Ready(());
+                        }
+                    }
+                }
+
+                Fut1State::Done => {
+                    // 冪等に Ready を返す（実際の生成物も概ね同様の振る舞い）
+                    return Poll::Ready(());
+                }
+            }
+            // state 遷移だけした場合は同じ poll 呼び出し内で続けて処理
+        }
+    }
+}
+```
+
+前章でも説明した通り、asyncブロックは状態機械に展開される。`fut1`のFutureは`CountFuture`を内部に保持しつつ、その`poll`内で`CountFuture`の`poll`を呼び出している。このためexecutorが実行するpollと、asyncブロック内でawaitされるpollは別物となり、`CountFuture`の返り値をasyncブロック内で利用できる。
+
 ## どこまで使えるか
 
-この Executor は「`poll` を当て続ければ自力で進む」Future に対しては働く。純粋な計算や、内部カウンタで擬似的に“中断”しているだけの例なら十分だ。一方、I/O やタイマーのように外部イベントで進む Future は、`wake` による再実行のきっかけが必要になる。ここで作ったダミー Waker は何もしないので、その種の Future は永遠に `Pending` を返し、ループが空回りする。実用に向けるには、起床キューを持ち、`wake` を受けてタスクを再キューする仕組みが要る。これは次章で実装していく。
+この Executor は非常にシンプルな実装ながら、基本的なasyncブロックはすべて動かすことができる。しかし、タスクの中断後に再開する仕組みがなく、
+ビジーループでCPUを占有してしまうため、実用的ではない。次章以降で `Waker` を使った中断・再開の仕組みを追加していく。
 
-## もう少しだけ手入れ
-
-ビジーループはCPUを占有しやすい。最小限の対策として `yield_now` を入れた。回し方を一定回数ごとに休ませる、あるいは「キューを一周して全件 `Pending` だったら短いスリープを入れる」程度の工夫でも体感は改善する。いずれにせよ、本章の目的は **`poll` を当てるだけで Future が前進する**という感覚を掴むことだ。wakeやリアクタ統合は後で段階的に足す。
