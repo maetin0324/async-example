@@ -11,12 +11,12 @@ use std::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll, RawWaker, RawWakerVTable, Waker};
 
-struct BusyExecutor {
+struct SimpleExecutor {
     // Output=() に揃えて格納する（結果が必要なら内側で共有スロットに書く）
     queue: VecDeque<Pin<Box<dyn Future<Output = ()>>>>,
 }
 
-impl BusyExecutor {
+impl SimpleExecutor {
     fn new() -> Self {
         Self { queue: VecDeque::new() }
     }
