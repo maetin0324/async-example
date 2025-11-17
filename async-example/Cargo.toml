@@ -10,3 +10,6 @@ name = "chapter4"
 
 [[bin]]
 name = "chapter5"
+
+[[bin]]
+name = "chapter6"
