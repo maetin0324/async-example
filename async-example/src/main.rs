@@ -13,43 +13,44 @@ use std::{
 static VTABLE: RawWakerVTable =
     RawWakerVTable::new(clone_waker, wake_task, wake_by_ref_task, drop_waker);
 
+// SAFETY: data is a pointer to Arc<Task>
 unsafe fn clone_waker(data: *const ()) -> RawWaker {
-    let task_rc: Arc<Task> = Arc::from_raw(data as *const Task);
+    let task_rc: Arc<Task> = unsafe { Arc::from_raw(data as *const Task) };
     let task_rc_clone = task_rc.clone();
     RawWaker::new(Arc::into_raw(task_rc_clone) as *const (), &VTABLE)
 }
 
+// SAFETY: data is a pointer to Arc<Task>
 unsafe fn wake_task(data: *const ()) {
-    let task_rc: Arc<Task> = Arc::from_raw(data as *const Task);
+    let task_rc: Arc<Task> = unsafe { Arc::from_raw(data as *const Task) };
     task_rc.wake();
     // Rc pointer drop here
 }
 
+// SAFETY: data is a pointer to Arc<Task>
 unsafe fn wake_by_ref_task(data: *const ()) {
-    let task_rc: Arc<Task> = Arc::from_raw(data as *const Task);
+    let task_rc: Arc<Task> = unsafe { Arc::from_raw(data as *const Task) };
     task_rc.wake();
     // drop guard
     let _ = Arc::into_raw(task_rc);
 }
 
+// SAFETY: data is a pointer to Arc<Task>
 unsafe fn drop_waker(data: *const ()) {
-    let _ = Arc::from_raw(data as *const Task);
+    let _ = unsafe { Arc::from_raw(data as *const Task) };
     // Rc pointer drop here
 }
 
 struct SimpleExecutor {
     task_queue: Receiver<Arc<Task>>,
     task_sender: Sender<Arc<Task>>,
-    waker_queue: Receiver<Waker>,
-    waker_sender: Sender<Waker>,
     task_remaining: Cell<usize>,
 }
 
 impl SimpleExecutor {
     fn new() -> SimpleExecutor {
         let (task_sender, task_queue) = std::sync::mpsc::channel();
-        let (waker_sender, waker_queue) = std::sync::mpsc::channel();
-        SimpleExecutor { task_queue, task_sender, waker_queue, waker_sender, task_remaining: 0.into() }
+        SimpleExecutor { task_queue, task_sender, task_remaining: 0.into() }
     }
 
     fn spawn<F, T>(&self, f: F) -> JoinHandle<T> 
@@ -111,7 +112,6 @@ impl Task {
     fn create_waker(self: &Arc<Self>) -> Waker {
         let rc_ptr = Arc::into_raw(self.clone()) as *const ();
         let raw = RawWaker::new(rc_ptr, &VTABLE);
-        // its safe
         unsafe { Waker::from_raw(raw) }
     }
 
