@@ -88,37 +88,28 @@ where
 `let f = async { work1().await; work2().await; 42 };` のような `async` ブロックも、上と同様に匿名の `Future` 型（状態＋`poll`）に展開される。`async move` はキャプチャした値をその匿名型のフィールドにムーブするだけで、基本構造は変わらない。
 
 ## Pin はなぜ必要か
-
-`poll` のレシーバが `Pin<&mut Self>` なのは、**Future の配置を固定する**ためだ。`await` をまたいで保持される局所変数や、サブ Future への参照が内部に入り込むと、オブジェクト自体をムーブした瞬間に参照が壊れる可能性がある。そこで `Box::pin` 等でヒープ上に固定してから `poll` するのが約束になっている。
+Futureのself引数が`Pin<&mut Self>`になっている理由は、Futureが**自己参照を含む可能性がある**ためである。
+例えば、以下のようなasyncブロックを考える。
 
 ```rust
-use std::future::Future;
-use std::pin::Pin;
-use std::task::{Context, Poll};
-
-struct StepN { step: u32, n: u32 }
-
-impl Future for StepN {
-    type Output = ();
-
-    fn poll(self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<()> {
-        // 配置固定されたまま内部状態だけを更新する
-        let this = unsafe { self.get_unchecked_mut() };
-        if this.step < this.n {
-            this.step += 1;
-            Poll::Pending           // まだ途中（本来は後で再び poll される）
-        } else {
-            Poll::Ready(())
-        }
-    }
-}
-
-// 実行側のイメージ
-let mut fut = Box::pin(StepN { step: 0, n: 3 });
-// Executor が何度か poll して進める（具体的な再開の仕組みは後章）
+let fut = async {
+    let s = String::from("hello");
+    let r: &str = &s;  // sへの参照を保持
+    some_async_op().await;
+    println!("{}", r);
+};
 ```
+この時、futは以下のようなFuture実装へと展開される。
 
-自己参照を含む可能性があるので、固定後に「入れ物ごと差し替える」ような操作は避ける。複雑な型でフィールドごとの可変借用が必要なら `pin-project` 系のマクロを使うと安全に書ける。
+```rust
+struct AnonymousFuture {
+    state: State,
+    s: String,
+    r: &str,  // self参照を含む
+}
+```
+`s`への参照`r`は、Futureのフィールドとして自己参照を含んでいるため、Futureがメモリ上で移動されると`r`が不正な参照となってしまう。
+そのため、Futureの`self`引数は`Pin<&mut Self>`となっており、これによりFutureがメモリ上で移動されないことが保証される。
 
 ## Futureとは
 
